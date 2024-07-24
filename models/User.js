@@ -11,11 +11,11 @@ const userSchema = new Schema(
       required: true,
       validate: {
         // Regex pattern to check if the email is a valid email
-        validator: () => {
-          return /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(email);
+        validator: function (v) {
+          return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v);
         },
       },
-    }, // TODO: Email validate
+    },
     thoughts: [{ type: Schema.Types.ObjectId, ref: "thought" }],
     friends: [{ type: Schema.Types.ObjectId, ref: "user" }],
   },

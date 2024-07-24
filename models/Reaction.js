@@ -1,11 +1,11 @@
 // Imports
-const { Schema } = require("mongoose");
+const { Schema, mongoose } = require("mongoose");
 
 // The reaction model
 const reactionSchema = new Schema({
   reactionId: {
-    type: Schema.Types.ObjectId,
-    default: new Schema.Types.ObjectId(),
+    type: mongoose.ObjectId,
+    default: new mongoose.Types.ObjectId(),
   },
   reactionBody: { type: String, required: true, maxLenght: 280 },
   username: { type: String, required: true },
