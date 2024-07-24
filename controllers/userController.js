@@ -4,7 +4,7 @@ const { User } = require("../models");
 // Gets all the users from the database and returns them as a json
 async function getAllUsers(req, res) {
   try {
-    const users = await User.find();
+    const users = await User.find().populate("friends");
     res.status(200).json(users);
   } catch (err) {
     // If something goes wrong, send the error as a json
@@ -16,6 +16,12 @@ async function getAllUsers(req, res) {
 async function getUserById(req, res) {
   try {
     const user = await User.findOne({ _id: req.params.userId });
+
+    // If no user was found with that given id, send a message as a json
+    if (!user) {
+      return res.status(404).json("No user was found with that ID");
+    }
+
     res.json(user);
   } catch (err) {
     // If something goes wrong, send the error as a json
@@ -27,7 +33,7 @@ async function getUserById(req, res) {
 async function createUser(req, res) {
   try {
     await User.create(req.body);
-    res.json("User created successfully!");
+    res.json("User was created successfully!");
   } catch (err) {
     // If something goes wrong, send the error as a json
     res.status(500).json(err);
@@ -37,12 +43,18 @@ async function createUser(req, res) {
 // Updates a user from the database
 async function updateUser(req, res) {
   try {
-    await User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
       { _id: req.params.userId },
       { $set: req.body },
       { runValidators: true }
     );
-    res.json("User updated successfully!");
+
+    // If no user was found with that given id, send a message as a json
+    if (!user) {
+      return res.status(404).json("No user was found with that ID");
+    }
+
+    res.json("User was updated successfully!");
   } catch (err) {
     // If something goes wrong, send the error as a json
     res.status(500).json(err);
@@ -52,8 +64,56 @@ async function updateUser(req, res) {
 // Deletes a user from the database
 async function deleteUser(req, res) {
   try {
-    await User.findOneAndDelete({ _id: req.params.userId });
-    res.json("User deleted successfully!");
+    const user = await User.findOneAndDelete({ _id: req.params.userId });
+
+    // If no user was found with that given id, send a message as a json
+    if (!user) {
+      return res.status(404).json("No user was found with that ID");
+    }
+
+    res.json("User was deleted successfully!");
+  } catch (err) {
+    // If something goes wrong, send the error as a json
+    res.status(500).json(err);
+  }
+}
+
+// Adds a friend to the friend list of the user with the given id
+async function createFriend(req, res) {
+  try {
+    const user = await User.findByIdAndUpdate(
+      { _id: req.params.userId },
+      { $addToSet: { friends: req.params.friendId } },
+      { runValidators: true }
+    );
+
+    // If no user was found with that given id, send a message as a json
+    if (!user) {
+      return res.status(404).json("No user was found with that ID");
+    }
+
+    res.json("Friend was added successfully!");
+  } catch (err) {
+    // If something goes wrong, send the error as a json
+    res.status(500).json(err);
+  }
+}
+
+// Deletes a friend from the friend list of the user with the given id
+async function deleteFriend(req, res) {
+  try {
+    const user = await User.findByIdAndUpdate(
+      { _id: req.params.userId },
+      { $pull: { friends: req.params.friendId } },
+      { runValidators: true }
+    );
+
+    // If no user was found with that given id, send a message as a json
+    if (!user) {
+      return res.status(404).json("No user was found with that ID");
+    }
+
+    res.json("Friend was deleted successfully!");
   } catch (err) {
     // If something goes wrong, send the error as a json
     res.status(500).json(err);
@@ -67,4 +127,6 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  createFriend,
+  deleteFriend,
 };
