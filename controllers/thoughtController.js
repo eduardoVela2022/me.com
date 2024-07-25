@@ -1,5 +1,5 @@
 // Imports
-const { Thought } = require("../models");
+const { Thought, User } = require("../models");
 
 // Gets all thoughts from the database and returns them as a json
 async function getAllThoughts(req, res) {
@@ -32,9 +32,22 @@ async function getThoughtById(req, res) {
 }
 
 // Creates a thought and saves it to the database
+// And adds it to the thought list of the user which matches the given id
 async function createThought(req, res) {
   try {
-    await Thought.create(req.body);
+    const thought = await Thought.create(req.body);
+
+    const user = await User.findByIdAndUpdate(
+      { _id: req.body.userId },
+      { $addToSet: { thoughts: thought._id.toString() } },
+      { runValidators: true }
+    );
+
+    // If no user was found with that given id, send a message as a json
+    if (!user) {
+      return res.status(404).json("No user was found with that ID");
+    }
+
     res.json("Thought was created successfully!");
   } catch (err) {
     // If something goes wrong, send the error as a json

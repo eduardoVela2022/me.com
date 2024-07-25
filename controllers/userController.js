@@ -4,7 +4,7 @@ const { User } = require("../models");
 // Gets all the users from the database and returns them as a json
 async function getAllUsers(req, res) {
   try {
-    const users = await User.find().populate("friends");
+    const users = await User.find().populate("friends").populate("thoughts");
     res.status(200).json(users);
   } catch (err) {
     // If something goes wrong, send the error as a json
@@ -15,9 +15,9 @@ async function getAllUsers(req, res) {
 // Gets a user from the database which matches the given id, and returns it as a json
 async function getUserById(req, res) {
   try {
-    const user = await User.findOne({ _id: req.params.userId }).populate(
-      "friends"
-    );
+    const user = await User.findOne({ _id: req.params.userId })
+      .populate("friends")
+      .populate("thoughts");
 
     // If no user was found with that given id, send a message as a json
     if (!user) {
@@ -80,7 +80,7 @@ async function deleteUser(req, res) {
   }
 }
 
-// Adds a friend to the friend list of the user with the given id
+// Adds a friend to the friend list of the user which matches the given id
 async function createFriend(req, res) {
   try {
     const user = await User.findByIdAndUpdate(
@@ -101,7 +101,7 @@ async function createFriend(req, res) {
   }
 }
 
-// Deletes a friend from the friend list of the user with the given id
+// Deletes a friend from the friend list of the user which matches the given id
 async function deleteFriend(req, res) {
   try {
     const user = await User.findByIdAndUpdate(
