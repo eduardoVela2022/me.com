@@ -1,5 +1,5 @@
 // Imports
-const { User } = require("../models");
+const { User, Thought } = require("../models");
 
 // Gets all the users from the database and returns them as a json
 async function getAllUsers(req, res) {
@@ -63,7 +63,7 @@ async function updateUser(req, res) {
   }
 }
 
-// Deletes a user from the database
+// Deletes a user and its thoughts from the database
 async function deleteUser(req, res) {
   try {
     const user = await User.findOneAndDelete({ _id: req.params.userId });
@@ -73,10 +73,13 @@ async function deleteUser(req, res) {
       return res.status(404).json("No user was found with that ID");
     }
 
+    await Thought.deleteMany({ _id: user.thoughts });
+
     res.json("User was deleted successfully!");
   } catch (err) {
     // If something goes wrong, send the error as a json
     res.status(500).json(err);
+    console.log(err);
   }
 }
 
