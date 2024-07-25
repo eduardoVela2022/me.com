@@ -25,7 +25,7 @@ function formatDate(date) {
 }
 
 // Virtual that returns the number of reactions the post has
-thoughtSchema.virtual("reactionCount").get(() => {
+thoughtSchema.virtual("reactionCount").get(function () {
   return this.reactions.length;
 });
 
