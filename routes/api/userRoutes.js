@@ -1,3 +1,5 @@
+// Imports
+const router = require("express").Router();
 const {
   getAllUsers,
   createUser,
@@ -7,9 +9,6 @@ const {
   createFriend,
   deleteFriend,
 } = require("../../controllers/userController");
-
-// Imports
-const router = require("express").Router();
 
 // Routes
 router.route("/").get(getAllUsers).post(createUser);

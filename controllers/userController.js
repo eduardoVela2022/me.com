@@ -12,10 +12,12 @@ async function getAllUsers(req, res) {
   }
 }
 
-// Gets a user from the database which matches the given id, and return it as a json
+// Gets a user from the database which matches the given id, and returns it as a json
 async function getUserById(req, res) {
   try {
-    const user = await User.findOne({ _id: req.params.userId });
+    const user = await User.findOne({ _id: req.params.userId }).populate(
+      "friends"
+    );
 
     // If no user was found with that given id, send a message as a json
     if (!user) {
