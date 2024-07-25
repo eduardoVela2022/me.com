@@ -51,7 +51,7 @@ async function updateThought(req, res) {
       { runValidators: true }
     );
 
-    // If no user was found with that given id, send a message as a json
+    // If no thought was found with that given id, send a message as a json
     if (!thought) {
       return res.status(404).json("No thought was found with that ID");
     }
@@ -66,10 +66,12 @@ async function updateThought(req, res) {
 // Deletes a thought from the database
 async function deleteThought(req, res) {
   try {
-    const user = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
+    const thought = await Thought.findOneAndDelete({
+      _id: req.params.thoughtId,
+    });
 
-    // If no user was found with that given id, send a message as a json
-    if (!user) {
+    // If no thought was found with that given id, send a message as a json
+    if (!thought) {
       return res.status(404).json("No thought was found with that ID");
     }
 
@@ -81,10 +83,46 @@ async function deleteThought(req, res) {
 }
 
 // Adds a reaction to the reaction list of the thought with the given id
-async function createReaction(req, res) {}
+async function createReaction(req, res) {
+  try {
+    const thought = await Thought.findByIdAndUpdate(
+      { _id: req.params.thoughtId },
+      { $addToSet: { reactions: req.body } },
+      { runValidators: true }
+    );
+
+    // If no thought was found with that given id, send a message as a json
+    if (!thought) {
+      return res.status(404).json("No thought was found with that ID");
+    }
+
+    res.json("Reaction was added successfully!");
+  } catch (err) {
+    // If something goes wrong, send the error as a json
+    res.status(500).json(err);
+  }
+}
 
 // Deletes a reaction from the reaction list of the thought with the given id
-async function deleteReaction(req, res) {}
+async function deleteReaction(req, res) {
+  try {
+    const thought = await Thought.findByIdAndUpdate(
+      { _id: req.params.thoughtId },
+      { $pull: { reactions: req.body } },
+      { runValidators: true }
+    );
+
+    // If no thought was found with that given id, send a message as a json
+    if (!thought) {
+      return res.status(404).json("No thought was found with that ID");
+    }
+
+    res.json("Reaction was deleted successfully!");
+  } catch (err) {
+    // If something goes wrong, send the error as a json
+    res.statu;
+  }
+}
 
 // Exports
 module.exports = {
