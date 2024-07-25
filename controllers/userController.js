@@ -79,7 +79,6 @@ async function deleteUser(req, res) {
   } catch (err) {
     // If something goes wrong, send the error as a json
     res.status(500).json(err);
-    console.log(err);
   }
 }
 
