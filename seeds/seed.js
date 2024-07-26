@@ -1,5 +1,5 @@
 const connection = require("../config/connection");
-const { User, Thought, Reaction } = require("../models");
+const { User, Thought } = require("../models");
 
 // User sample data
 const userSampleData = [
@@ -103,7 +103,17 @@ connection.once("open", async () => {
   console.log("\n--- Created users data collection ---\n");
 
   // Create sample thoughts
-  await Thought.create(thoughtSampleData);
+  const thoughts = await Thought.create(thoughtSampleData);
+
+  // Adds sample thoughts to the thoughts list of their respective user
+  for (const thought of thoughts) {
+    await User.findOneAndUpdate(
+      { username: thought.username },
+      { $addToSet: { thoughts: thought._id.toString() } },
+      { runValidators: true }
+    );
+  }
+
   console.log("\n--- Created thoughts data collection ---\n");
 
   // End process
