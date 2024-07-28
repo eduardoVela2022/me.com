@@ -43,7 +43,7 @@ And thats it! To learn how to use me.com, check out the “Usage” section of t
 
 ## Usage
 
-To learn how to use me.com, watch the following walkthrough video:
+To learn how to use me.com, watch the following walkthrough video: https://drive.google.com/file/d/177hwZTqwwxpKRfU-3JI_71e0QnBbht1U/view?usp=sharing
 
 ## Credits
 
