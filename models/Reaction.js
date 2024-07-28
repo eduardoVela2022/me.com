@@ -2,15 +2,18 @@
 const { Schema, mongoose } = require("mongoose");
 
 // The reaction model
-const reactionSchema = new Schema({
-  reactionId: {
-    type: mongoose.ObjectId,
-    default: new mongoose.Types.ObjectId(),
+const reactionSchema = new Schema(
+  {
+    reactionId: {
+      type: mongoose.ObjectId,
+      default: new mongoose.Types.ObjectId(),
+    },
+    reactionBody: { type: String, required: true, maxLenght: 280 },
+    username: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now(), get: formatDate },
   },
-  reactionBody: { type: String, required: true, maxLenght: 280 },
-  username: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now(), get: formatDate },
-});
+  { toJSON: { getters: true } }
+);
 
 // Formats the given date
 function formatDate(date) {

@@ -1,5 +1,5 @@
 const connection = require("../config/connection");
-const { User, Thought, Reaction } = require("../models");
+const { User, Thought } = require("../models");
 
 // User sample data
 const userSampleData = [
@@ -36,40 +36,54 @@ const userSampleData = [
 // Thought sample data
 const thoughtSampleData = [
   {
-    thoughtText: "Thought #1",
+    thoughtText: "Which are some renowned backpack brands? 🎒",
     username: "Emily Brown",
     reactions: [
       {
-        reactionBody: "Reaction #1",
+        reactionBody: "Chenson is pretty popular where I live.",
         username: "Lily Turner",
       },
     ],
   },
   {
-    thoughtText: "Thought #2",
+    thoughtText:
+      "Should I go to Barbados or Costa Rica for a summer vacation? What do you say? 🇧🇧🇨🇷",
     username: "Amelia Roberts",
     reactions: [
       {
-        reactionBody: "Reaction #2",
+        reactionBody: "Costa Rica is great if you like surfing.",
         username: "James Smith",
       },
       {
-        reactionBody: "Reaction #3",
+        reactionBody: "Barbados has great beaches and rum.",
         username: "Thomas Walker",
       },
     ],
   },
   {
-    thoughtText: "Thought #3",
+    thoughtText: "Does anyone know how to play Dungeons and Dragons?",
     username: "George Evans",
   },
   {
-    thoughtText: "Thought #4",
+    thoughtText: "Are chihuahuas good pets?",
     username: "Lily Turner",
     reactions: [
       {
-        reactionBody: "Reaction #4",
+        reactionBody:
+          "Yes, they are pretty active and smart, and they make good company.",
         username: "Emily Brown",
+      },
+    ],
+  },
+  {
+    thoughtText:
+      "I cannot wait for summer to start. I want to surf the waves of Portugal so bad. 🇵🇹",
+    username: "Emily Brown",
+    reactions: [
+      {
+        reactionBody:
+          "Neither do I, I will surf the waives of Mexico this coming summer. 🇲🇽",
+        username: "Olivia Wilson",
       },
     ],
   },
@@ -103,7 +117,17 @@ connection.once("open", async () => {
   console.log("\n--- Created users data collection ---\n");
 
   // Create sample thoughts
-  await Thought.create(thoughtSampleData);
+  const thoughts = await Thought.create(thoughtSampleData);
+
+  // Adds sample thoughts to the thoughts list of their respective user
+  for (const thought of thoughts) {
+    await User.findOneAndUpdate(
+      { username: thought.username },
+      { $addToSet: { thoughts: thought._id.toString() } },
+      { runValidators: true }
+    );
+  }
+
   console.log("\n--- Created thoughts data collection ---\n");
 
   // End process
